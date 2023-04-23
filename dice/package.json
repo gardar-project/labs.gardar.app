@@ -1,0 +1,35 @@
+{
+  "name": "dice-gardar-app",
+  "homepage": "https://labs.gardar.app/dice",
+  "version": "0.0.1",
+  "repository": "github:gardar-project/labs.gardar.app",
+  "scripts": {
+    "lint": "npm audit fix && eslint src/ --ext .js,.ts --ignore-path .gitignore --fix && tsc --noEmit",
+    "test": "jest --verbose",
+    "clean": "rm -rf .build/* node_modules/* && touch .build/.gitkeep && touch node_modules/.gitkeep",
+    "docs": "typedoc --entryPoints src/dice.ts",
+    "build": "esbuild --bundle --format=esm --tsconfig=./tsconfig.json src/dice.ts --minify --sourcemap=external --outdir=.build",
+    "deploy": "gh-pages --dotfiles --no-history --dist .",
+    "dev": "esbuild --bundle --format=esm --tsconfig=./tsconfig.json src/dice.ts --outdir=.build --watch --serve=localhost:8665 --servedir=."
+  },
+  "dependencies": {
+    "@babylonjs/core": "4.2.0",
+    "esbuild-wasm": "0.17.10",
+    "tslib": "2.5.0"
+  },
+  "devDependencies": {
+    "@types/jest": "27.4.1",
+    "@types/node": "17.0.26",
+    "@types/web-app-manifest": "1.0.2",
+    "@typescript-eslint/eslint-plugin": "5.20.0",
+    "@typescript-eslint/parser": "5.20.0",
+    "esbuild": "0.17.0",
+    "eslint": "8.14.0",
+    "eslint-plugin-lit": "1.8.2",
+    "gh-pages": "3.1.0",
+    "jest": "27.0.0",
+    "ts-jest": "27.1.4",
+    "typedoc": "0.23.22",
+    "typescript": "4.9"
+  }
+}
