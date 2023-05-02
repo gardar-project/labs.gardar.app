@@ -1,16 +1,38 @@
 {
-  "name": "dice-gardar-app",
+  "name": "gardar-dice",
   "homepage": "https://labs.gardar.app/dice",
   "version": "0.0.1",
   "repository": "github:gardar-project/labs.gardar.app",
+  "phoenix": {
+    "devmode": false,
+    "installed": false,
+    "renderer": {
+      "engine": {
+        "alpha": true,
+        "antialias": false
+      },
+      "cameraHolder": {
+        "position": { "$type": "Vector3", "x": 0, "y": 10, "z": 0 },
+        "rotation": { "$type": "Vector3", "x": 0, "y": -1.57, "z": 0 },
+        "scalingDeterminant": 0.1
+      },
+      "scene": {
+        "fogDensity": 0.2,
+        "fogEnd": 10,
+        "fogStart": 0,
+        "clearColor": { "$type": "Color4", "r": 0, "g": 0, "b": 0, "a": 0 },
+        "fogColor": { "$type": "Color3", "r": 0, "g": 0, "b": 0 }
+      }
+    }
+  },
   "scripts": {
     "lint": "npm audit fix && eslint src/ --ext .js,.ts --ignore-path .gitignore --fix && tsc --noEmit",
     "test": "jest --verbose",
     "clean": "rm -rf .build/* node_modules/* && touch .build/.gitkeep && touch node_modules/.gitkeep",
-    "docs": "typedoc --entryPoints src/dice.ts",
-    "build": "esbuild --bundle --format=esm --tsconfig=./tsconfig.json src/dice.ts --minify --sourcemap=external --outdir=.build",
+    "docs": "typedoc --entryPoints src/gardar/dice.ts",
+    "build": "esbuild --bundle --format=esm --tsconfig=./tsconfig.json src/gardar/dice.ts --minify --sourcemap=external --outdir=.build/gardar",
     "deploy": "gh-pages --dotfiles --no-history --dist .",
-    "dev": "esbuild --bundle --format=esm --tsconfig=./tsconfig.json src/dice.ts --outdir=.build --watch --serve=localhost:8665 --servedir=."
+    "dev": "esbuild --bundle --format=esm --tsconfig=./tsconfig.json src/gardar/dice.ts --outdir=.build/gardar --watch --serve=localhost:8665 --servedir=."
   },
   "dependencies": {
     "@babylonjs/core": "4.2.0",
