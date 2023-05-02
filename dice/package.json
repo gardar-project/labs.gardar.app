@@ -13,7 +13,6 @@
       },
       "cameraHolder": {
         "position": { "$type": "Vector3", "x": 0, "y": 10, "z": 0 },
-        "rotation": { "$type": "Vector3", "x": 0, "y": -1.57, "z": 0 },
         "scalingDeterminant": 0.1
       },
       "scene": {

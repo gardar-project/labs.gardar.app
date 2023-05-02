@@ -16,6 +16,7 @@ import { Tools } from "@babylonjs/core/Misc/tools"
 import { SerializationHelper } from "@babylonjs/core/Misc/decorators"
 import { ArcFollowCamera } from "@babylonjs/core/Cameras/followCamera"
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode"
+import { Angle } from "@babylonjs/core/Maths/math.path"
 
 export class Babylon {
     private _config: Config;
@@ -44,14 +45,16 @@ export class Babylon {
         cameraHolder.isVisible = false;
         scene.activeCamera.parent = cameraHolder;
         const renderer = new Babylon(config, viewport, engine, scene, cameraHolder);
-        await renderer._loadShader("src/babylon/shaders/sample.vertex.glsl");
-        await renderer._loadShader("src/babylon/shaders/sample.fragment.glsl");
+        await renderer._loadShader("sampleVertexShader", "src/babylon/shaders/sample.vertex.glsl");
+        await renderer._loadShader("sampleFragmentShader", "src/babylon/shaders/sample.fragment.glsl");
+        window.addEventListener("resize", () => engine.resize());
         engine.runRenderLoop(() => { scene.render() });
+        engine.resize();
         return renderer;
     }
 
-    private async _loadShader(path: string) {
-        const name = path.replace(new RegExp(".*/"), "").replace(new RegExp("\..glsl$"), "");
+    private async _loadShader(name: string, path: string) {
+        // const name = path.replace(new RegExp(".*/"), "").replace(new RegExp("\..glsl$"), "");
         Effect.ShadersStore[name] = await (await globalThis.fetch(path)).text();
     }
 
@@ -71,51 +74,35 @@ export class Babylon {
     }
 
     public async setupDemo() {
-        // this._camera.noRotationConstraint=true;
-        // this._camera.upVector = new Vector3(1, 0.2, -1);
-    
-        // this._scene.activeCamera = new ArcFollowCamera("camera", Tools.ToRadians(-90), 0, 10, null, this._scene);
-        // const camera = new ArcRotateCamera("camera", 0, 0, 0, Vector3.Zero(), this._scene);
-
-        // this._scene.activeCamera = new FreeCamera()
-
-        // this._scene.activeCamera = new DeviceOrientationCamera("main", new Vector3(0, 0, 0), this._scene);
-        // for (let inputName in this._scene.activeCamera.inputs.attached) {
-        //     if (inputName != "deviceOrientation") {
-        //         this._scene.activeCamera.inputs.attached[inputName].detachControl();
-        //     }
-        // }
-        // this.enableCameraControls();
-        // this._scene.activeCamera.setTarget(new Vector3(0, 0, 0));
-
-        // this._camera.position = new Vector3(0, 10, 0);
-        // this._camera.upVector = new Vector3(0, 0, 1);
+        this._cameraHolder.rotation = new Vector3(0, -Angle.FromDegrees(90).radians(), 0);
         const light = new HemisphericLight("light", new Vector3(0, 1, 0), this._scene);
 
-        var alphaMaterial = new StandardMaterial("alpha", this._scene);
+        const alphaMaterial = new StandardMaterial("alpha", this._scene);
         alphaMaterial.alpha = 0.5;//TODO
         alphaMaterial.diffuseColor = new Color3(1, 0, 0);
+        alphaMaterial.specularColor = new Color3(1, 0, 0);
+        alphaMaterial.ambientColor = new Color3(1, 0, 0);
+        alphaMaterial.emissiveColor = new Color3(1, 0, 0);
 
-        const mesh = MeshBuilder.CreatePlane("board", { size: 1 }, this._scene);
-        mesh.position = new Vector3(0, 0, 0);
-        mesh.rotation = new Vector3(1.57, 0, 0);
-        mesh.material = alphaMaterial;
+        const board = MeshBuilder.CreatePlane("board", { size: 1 }, this._scene);
+        board.position = new Vector3(0, 0, 0);
+        board.rotation = new Vector3(Angle.FromDegrees(90).radians(), 0, 0);
+        board.material = alphaMaterial;
 
+        this.updateBoardSize(board);
+        window.addEventListener("resize", () => this.updateBoardSize(board));
 
+        const dice = MeshBuilder.CreateBox("dice", { size: 1 }, this._scene);
+        dice.position = new Vector3(0, 0, 0);
+        dice.rotation = new Vector3(0, 0, 0);
+        globalThis.demo = { camera: this._scene.activeCamera, light, board, renderer: this }
+    }
 
-        var redMat = new StandardMaterial("red", this._scene);
-        redMat.diffuseColor = new Color3(1, 0, 0);
-        redMat.emissiveColor = new Color3(1, 0, 0);
-        redMat.specularColor = new Color3(1, 0, 0);
-
-        var plane1 = Mesh.CreatePlane("plane1", 3, this._scene, true, Mesh.DOUBLESIDE);
-        plane1.position.x = -3;
-        plane1.position.z = 0;
-        plane1.material = redMat;
-
-        // var ground = Mesh.CreateGround("ground1", 10, 10, 2, this._scene);
-        // ground.material = alphaMaterial;
-        // ground.position.y = -2;
-        globalThis.demo = { camera: this._scene.activeCamera, light, mesh, plane1, renderer: this }
+    updateBoardSize(board : Mesh) {
+        // that one time in life when trygonometry is useful
+        const boardWidth = 2 * Math.sin(this._camera.fov/2) * (this._cameraHolder.position.y / Math.cos(this._camera.fov/2));
+        const aspectRatio = document.documentElement.clientWidth / document.documentElement.clientHeight;
+        const boardLength = boardWidth * aspectRatio;
+        board.scaling = new Vector3(boardLength*1.1, boardWidth*1.1, 1);
     }
 }
