@@ -1,4 +1,5 @@
 export class Vector3 {
+    public ["$type"] : string = "Vector3";
     public static ZERO : Vector3 = new Vector3(0,0,0);
 
     x: number;

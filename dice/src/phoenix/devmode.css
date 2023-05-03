@@ -1,15 +1,20 @@
-#scene-explorer-host {
+.babylon #scene-explorer-host {
     position: absolute !important;
     z-index: 1;
     width: 300px;
 }
 
-#inspector-host {
+.babylon #inspector-host {
     position: absolute !important;
     z-index: 1;
     width: 300px;
 }
 
-body {
+.babylon body {
     padding: 0 300px;
+}
+
+.babylon .viewport {
+    margin: 0 300px;
+    width: calc(100vw - 600px) !important;
 }

@@ -35,11 +35,13 @@ import { Material as PhoenixMaterial } from "../renderer/material"
 import { HavokPlugin } from "@babylonjs/core/Physics/v2/Plugins/havokPlugin"
 import "@babylonjs/core/Physics/physicsEngineComponent"
 import "@babylonjs/loaders/glTF"
+import { DefaultRenderingPipeline } from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline"
 
 export class Babylon implements Renderer {
     private _config: Config;
     private _viewport: HTMLCanvasElement;
     private _engine: Engine;
+    private _pipeline: DefaultRenderingPipeline;
     private _scene: Scene;
     private _cameraHolder: TransformNode;
     private _alphaMaterial: Material;
@@ -49,6 +51,7 @@ export class Babylon implements Renderer {
             config:Config, 
             viewport:HTMLCanvasElement, 
             engine:Engine, 
+            pipeline:DefaultRenderingPipeline,
             scene:Scene, 
             cameraHolder: TransformNode,
             alphaMaterial: Material,
@@ -56,6 +59,7 @@ export class Babylon implements Renderer {
         this._config = config;
         this._viewport = viewport;
         this._engine = engine;
+        this._pipeline = pipeline;
         this._scene = scene;
         this._cameraHolder = cameraHolder;
         this._alphaMaterial = alphaMaterial;
@@ -74,6 +78,7 @@ export class Babylon implements Renderer {
         } else {
             viewport.style.imageRendering = "pixelated";
         }
+        window.document.documentElement.classList.add("babylon");
         const scene = new Scene(engine);
         const ambientColor = Babylon._color3(config.renderer.ambientColor);
         const clearAlpha = config.renderer.transparent ? 0 : 1;
@@ -83,23 +88,26 @@ export class Babylon implements Renderer {
         const cameraHolder = MeshBuilder.CreateSphere("cameraHolder", { diameter: 1 }, scene);
         cameraHolder.isVisible = false;
         scene.activeCamera.parent = cameraHolder;
-        const alphaMaterial = new StandardMaterial("alpha", scene);
-        alphaMaterial.alpha = 0.5;//TODO
-        alphaMaterial.diffuseColor = new Color3(1, 0, 0);
-        alphaMaterial.specularColor = new Color3(1, 0, 0);
-        alphaMaterial.ambientColor = new Color3(1, 0, 0);
-        alphaMaterial.emissiveColor = new Color3(1, 0, 0);
-        const renderer = new Babylon(config, viewport, engine, scene, cameraHolder, alphaMaterial, ambientColor);
-        await renderer._loadShader("sampleVertexShader", "src/babylon/shaders/sample.vertex.glsl");
-        await renderer._loadShader("sampleFragmentShader", "src/babylon/shaders/sample.fragment.glsl");
-        window.addEventListener("resize", () => engine.resize());
-        engine.runRenderLoop(() => { scene.render() });
-        engine.resize();
+        const alphaMaterial = Object.assign(new StandardMaterial("alpha", scene), { alpha: 0 });
+        await this._loadShader("sampleVertexShader", "src/babylon/shaders/sample.vertex.glsl");
+        await this._loadShader("sampleFragmentShader", "src/babylon/shaders/sample.fragment.glsl");
+        const pipeline = new DefaultRenderingPipeline("phoenix", false, scene);
+        const renderer = new Babylon(config, viewport, engine, pipeline, scene, cameraHolder, alphaMaterial, ambientColor);
+        window.addEventListener("resize", () => renderer._updateResolution());
+        engine.runRenderLoop(() => {  scene.render(); });
+        renderer._updateResolution();
         await renderer._setupPhysics();
         return renderer;
     }
 
-    async _setupPhysics() {
+    private _updateResolution() {
+        let pixelRatio = this._viewport.clientHeight / this._config.renderer.resolution.y;
+        pixelRatio = Math.max(pixelRatio, this._config.renderer.minPixelRatio);
+        this._engine.setHardwareScalingLevel(pixelRatio);
+        this._engine.resize();
+    }
+
+    private async _setupPhysics() {
         const packageName = "@babylonjs/havok";
         const packageVersion = this._config.packageConfig.dependencies[packageName];
         const filePath = `${packageName}@${packageVersion}/HavokPhysics_es.js`;
@@ -109,14 +117,14 @@ export class Babylon implements Renderer {
     }
 
     private static _color3(color : PhoenixColor3) : Color3 {
-        return new Color3(color.r, color.g, color.b);
+        return new Color3(color.r, color.g, color.b).toLinearSpace();
     }
 
     private static _vector3(vector : PhoenixVector3) : Vector3 {
         return new Vector3(vector.x, vector.y, vector.z);
     }
 
-    private async _loadShader(name: string, path: string) {
+    private static async _loadShader(name: string, path: string) {
         // const name = path.replace(new RegExp(".*/"), "").replace(new RegExp("\..glsl$"), "");
         Effect.ShadersStore[name] = await (await globalThis.fetch(path)).text();
     }

@@ -1,4 +1,5 @@
 export class Color3 {
+    public ["$type"] : string = "Color3";
     public static WHITE : Color3 = new Color3(1,1,1);
 
     r: number;

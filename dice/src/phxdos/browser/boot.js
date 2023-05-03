@@ -5,8 +5,8 @@
 
 async function main() {
     const config = await loadConfig();
-    const bundlePath = `./.build/${config.packageName.replaceAll('-', '/')}.js`;
-    const simpleNameLower = config.packageName.replace(new RegExp(".*-"), "").toLowerCase();
+    const bundlePath = `./.build/${config.packageConfig.name.replaceAll('-', '/')}.js`;
+    const simpleNameLower = config.packageConfig.name.replace(new RegExp(".*-"), "").toLowerCase();
     const script = window.document.createElement("script");
     // @ts-ignore
     window.phxdos = { config };
@@ -31,8 +31,6 @@ async function loadConfig() {
     const config = /**@type {Config}*/(packageConfig["phoenix"]);
     delete packageConfig["phoenix"];
     config.deploymentRoot = window.location.origin + window.location.pathname;
-    config.version = packageConfig.version;
-    config.packageName = packageConfig.name;
     config.packageConfig = packageConfig;
     config.manifest = JSON.parse(await (await globalThis.fetch("config/manifest.json")).text());
     Object.assign(config, JSON.parse(window.localStorage.getItem("config.json") ?? "{}"));

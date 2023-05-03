@@ -8,6 +8,28 @@
     "devmode": false,
     "installed": false,
     "renderer": {
+      "resolution": {
+        "$type": "Vector2",
+        "x": 640,
+        "y": 360
+      },
+      "minPixelRatio": 2,
+      "pipeline": {
+        "sharpenEnabled": true,
+        "sharpen": {
+          "edgeAmount": 0.2
+        },
+        "fxaaEnabled": false,
+        "bloomScale": 0,
+        "depthOfFieldEnabled": false,
+        "depthOfFieldBlurLevel": 0,
+        "glowLayerEnabled": false,
+        "chromaticAberrationEnabled": false,
+        "grainEnabled": true,
+        "grain": {
+          "intensity": 5
+        }
+      },
       "antialias": false,
       "transparent": true,
       "ambientColor": {

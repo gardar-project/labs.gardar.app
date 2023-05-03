@@ -9,6 +9,7 @@ import { Material } from "../renderer/material";
 import { Vector3 } from "../renderer/vector3";
 import { WorldObject } from "../renderer/world-object";
 import { Math as PhoenixMath } from "../phoenix/math";
+import { Vector2 } from "@babylonjs/core";
 
 export class Dice {
     private _config : Config;
@@ -26,7 +27,8 @@ export class Dice {
         const cage = engine.renderer.createBox({ insideOut: true });
         const dice = engine.renderer.createBox({ 
             material: new Material(null, new Color4(1, 1, 0)),
-            position: new Vector3(0, 1, 0)
+            position: new Vector3(0, 1, 0),
+            rotation: new Vector3(1,2,3) //TODO
         });
         const light = engine.renderer.createLight({
             color: new Color4(1, 1, 1, 0.75), 

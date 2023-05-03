@@ -1,24 +1,48 @@
 import { type WebAppManifest } from "web-app-manifest";
 import { Color3 } from "./renderer/color3";
-import type PackageConfig from "../package.json";
+import PackageConfig from "../package.json";
+import { Vector3 } from "./renderer/vector3";
+import { Vector2 } from "./renderer/vector2";
 
-export interface Config {
+type ConfigBase = typeof PackageConfig.phoenix;
+
+export interface Config extends ConfigBase {
   deploymentRoot : string;
   packageRepository : string;
   packageConfig: typeof PackageConfig;
-  version: string;
-  /**
-   * '-' characters are interpreted as namespace separators
-   * after normalisation must match path of entry point file and export name
-   * e.g. 'gardar-dice' matches 'gardar/dice.ts' and 'export class Dice'
-   */
-  packageName: string;
   devmode: boolean;
   installed: boolean;
   manifest: WebAppManifest;
   renderer: {
+    resolution: Vector2,
+    minPixelRatio: number,
     antialias: boolean,
     transparent: boolean,
-    ambientColor: Color3
+    ambientColor: Color3,
+    cameraHolder: {
+      position: Vector3,
+      scalingDeterminant: number
+    },
+    scene: {
+      fogDensity: number,
+      fogEnd: number,
+      fogStart: number
+    },
+    pipeline: {
+      sharpenEnabled: boolean,
+      sharpen: {
+        edgeAmount: number
+      },
+      fxaaEnabled: boolean,
+      bloomScale: number,
+      depthOfFieldEnabled: boolean,
+      depthOfFieldBlurLevel: number,
+      glowLayerEnabled: boolean,
+      chromaticAberrationEnabled: boolean,
+      grainEnabled: boolean,
+      grain: {
+        intensity: number
+      }
+    }
   }
 }

@@ -3,6 +3,7 @@ import { Angle } from "@babylonjs/core/Maths/math.path";
 import { Phoenix } from "./phoenix";
 import { Vector2, Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { AxesViewer } from "@babylonjs/core/Debug/axesViewer";
+import { GizmoManager } from "@babylonjs/core/Gizmos/gizmoManager";
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 
@@ -18,6 +19,11 @@ export class Devmode {
     static IMPORT_TYPES : {[ typeName : string ]: any} = { Angle, Vector2, Vector3 };
     public engine : Phoenix;
     public game : any;
+    public gizmoManager : GizmoManager;
+    
+    public get config(): Config {
+        return this.engine._config;
+    }
 
     private constructor(engine : Phoenix) {
         this.engine = engine;
@@ -29,11 +35,13 @@ export class Devmode {
         for (let typeName in Devmode.IMPORT_TYPES) {
             window[typeName] = Devmode.IMPORT_TYPES[typeName];
         }
-        new AxesViewer(engine._renderer._scene, 1);
+        // new AxesViewer(engine._renderer._scene, 1);
         engine._system.loadStyle("src/phoenix/devmode.css");
         engine._renderer._scene.debugLayer.show({ embedMode: false });
         const wrapper = window.document.querySelector("#scene-explorer-host + div");
         Array.from(wrapper.children).forEach(e => window.document.body.appendChild(e));
         wrapper.remove();
+        devmode.gizmoManager = new GizmoManager(engine._renderer._scene);
+        devmode.gizmoManager.scaleRatio = 10;
     }
 }

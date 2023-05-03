@@ -1,4 +1,5 @@
 export class Vector2 {
+    public ["$type"] : string = "Vector2";
     x: number;
     y: number;
 
