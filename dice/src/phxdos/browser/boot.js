@@ -29,9 +29,11 @@ async function main() {
 async function loadConfig() {
     const packageConfig = JSON.parse(await (await globalThis.fetch("package.json")).text());
     const config = /**@type {Config}*/(packageConfig["phoenix"]);
+    delete packageConfig["phoenix"];
     config.deploymentRoot = window.location.origin + window.location.pathname;
     config.version = packageConfig.version;
     config.packageName = packageConfig.name;
+    config.packageConfig = packageConfig;
     config.manifest = JSON.parse(await (await globalThis.fetch("config/manifest.json")).text());
     Object.assign(config, JSON.parse(window.localStorage.getItem("config.json") ?? "{}"));
     for (const argsString of [ globalThis.location.search, globalThis.location.hash ]) {

@@ -1,0 +1,15 @@
+#scene-explorer-host {
+    position: absolute !important;
+    z-index: 1;
+    width: 300px;
+}
+
+#inspector-host {
+    position: absolute !important;
+    z-index: 1;
+    width: 300px;
+}
+
+body {
+    padding: 0 300px;
+}

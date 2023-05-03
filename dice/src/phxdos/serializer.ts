@@ -36,8 +36,12 @@ class _Serializer {
     public applyOverrides(source:any, target:any) {
         for (let key in source) {
             let targetKey = key;
-            if (target[key] === undefined && target["_" + key] !== undefined) {
-                targetKey = "_" + key;
+            if (target[key] === undefined) {
+                if(target["_" + key] !== undefined) {
+                    targetKey = "_" + key;
+                } else {
+                    continue;
+                }
             }
             if (typeof source[key] != "object") {
                 if (target == this) {

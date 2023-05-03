@@ -1,7 +1,11 @@
 import { type WebAppManifest } from "web-app-manifest";
+import { Color3 } from "./renderer/color3";
+import type PackageConfig from "../package.json";
 
 export interface Config {
   deploymentRoot : string;
+  packageRepository : string;
+  packageConfig: typeof PackageConfig;
   version: string;
   /**
    * '-' characters are interpreted as namespace separators
@@ -12,4 +16,9 @@ export interface Config {
   devmode: boolean;
   installed: boolean;
   manifest: WebAppManifest;
+  renderer: {
+    antialias: boolean,
+    transparent: boolean,
+    ambientColor: Color3
+  }
 }

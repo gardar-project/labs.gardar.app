@@ -1,15 +1,17 @@
 import { Babylon } from "../babylon/babylon";
 import { Phxdos } from "../phxdos/phxdos";
 import { Serializer } from "../phxdos/serializer";
+import { Engine } from "../renderer/engine";
+import { Renderer } from "../renderer/renderer";
 import { Devmode } from "./devmode";
 
-export class Phoenix {
+export class Phoenix implements Engine {
     private _config : Config;
     private _system : Phxdos;
     private _viewport : HTMLCanvasElement;
     private _renderer : Babylon;
 
-    public static async load(config : Config) : Promise<Phoenix> {
+    public static async load(config : Config) : Promise<Engine> {
         const system = await Phxdos.load(config);
         const viewport = Phoenix._createViewport();
         const renderer = await Babylon.load(config, viewport);
@@ -19,6 +21,10 @@ export class Phoenix {
             await Devmode.setup(engine);
         }
         return engine;
+    }
+
+    public get renderer() : Renderer {
+        return this._renderer;
     }
 
     private static _createViewport() {

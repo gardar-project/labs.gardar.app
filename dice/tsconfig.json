@@ -18,6 +18,7 @@
         "noPropertyAccessFromIndexSignature": true,
         "outDir": ".build",
         "preserveConstEnums": true,
+        "resolveJsonModule": true,
         "strict": true,
         "strictNullChecks": true,
         "target": "ESNext",
@@ -27,5 +28,5 @@
         ]
     },
     "exclude": [ "node_modules", "test" ],
-    "include": [ "./src/**/*.ts", "src/**/*.js" ]
+    "include": [ "./src/**/*.ts", "src/**/*.js", "**/*.json" ]
 }
