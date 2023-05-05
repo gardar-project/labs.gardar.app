@@ -1,0 +1,12 @@
+{
+  "name": "better-babylonjs-playground",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "oimo": "1.0.9",
+    "cannon": "0.6.2",
+    "earcut": "2.1.3",
+    "babylonjs": "3.2.0-beta.4",
+    "babylonjs-loaders": "3.2.0-beta.4"
+  }
+}
